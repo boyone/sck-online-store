@@ -4,6 +4,8 @@ services:
     container_name: store-service
     build:
       context: store-service
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
     ports:
       - "8000:8000"
     environment:
@@ -114,6 +116,8 @@ services:
     container_name: store-web
     build:
       context: store-web
+      args:
+        BUILDKIT_INLINE_CACHE: "1"
     ports:
       - "3000:3000"
 

@@ -1,24 +1,32 @@
-FROM node:21-alpine AS base
+FROM node:21-alpine AS builder
 
-# Build argument for store service URL (optional)
 ARG STORE_SERVICE_URL
 
 WORKDIR /app
 
-COPY package.json package-lock.json yarn.lock ./
+COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm ci
 
 COPY . .
 
 RUN if [ -n "$STORE_SERVICE_URL" ]; then \
-      echo "✓ Build argument provided, replacing .env file"; \
       echo "STORE_SERVICE_URL=${STORE_SERVICE_URL}" > .env; \
-    else \
-      echo "✓ No build argument, using existing .env file"; \
     fi
 
 RUN npm run build
+
+FROM node:21-alpine AS runner
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+
+RUN npm ci --omit=dev
+
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.js ./next.config.js
 
 EXPOSE 3000
 

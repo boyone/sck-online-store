@@ -2,6 +2,8 @@
 include store-web/.env
 export $(shell sed 's/=.*//' 'store-web/.env')
 
+export DOCKER_BUILDKIT := 1
+
 
 all: backend_start store_web
 
@@ -43,16 +45,16 @@ backend_unit_test:
 	cd store-service && go test -v 2>&1 ./... | go-junit-report -set-exit-code > report.xml
 
 setup_test_fixtures:
-	docker compose up -d db thirdparty
-	sleep 7
-	docker compose up liquibase
+	docker compose up -d db thirdparty liquibase
+	sleep 10
+# 	docker compose up liquibase
 
 backend_integration_test: setup_test_fixtures
 	cd store-service && go test -tags=integration ./...
 	docker compose down 
 
 store_db:
-	docker compose up -d db 
+	docker compose up -d db liquibase
 
 store_service_dev_mode:
 	cd ./store-service/cmd && \
@@ -92,7 +94,7 @@ build_nginx:
 
 start_test_suite:
 	cp -f store-web/.env_local store-web/.env
-	docker compose up -d thirdparty point-service db store-service store-web nginx seed liquibase --build
+	docker compose up -d thirdparty point-service db store-service store-web nginx liquibase --build
 
 start_test_suite_grid:
 	cp -f store-web/.env_grid store-web/.env
@@ -130,7 +132,7 @@ run_robot_order_summary_pdf:
 	&& python3 -m venv .venv \
 	&& . .venv/bin/activate \
 	&& pip install -r requirements.txt \
-	&& robot -v URL:$(URL) -v REMOTE_HUB_URL:${REMOTE_HUB_URL} -x ./reports/pdf.xml ./002-Order-Summary-PDF \
+	&& robot -v URL:$(URL) -v REMOTE_HUB_URL:${REMOTE_HUB_URL} -x ./reports/pdf.xml ./002-Order-Summary-PDF/TSS-OSP-001-Order_one_product_one_unit_success.robot \
 	&& deactivate
 
 # run_newman: 
@@ -206,6 +208,25 @@ test_all: code_analysis_all unit_test_all start_test_suite run_newman run_robot 
 
 gen-swagger:
 	cd store-service && swag init -g cmd/main.go -o cmd/docs
+
+### Add New Products
+gen-brands:
+	cd atdd/data-generator && npx ts-node src/index.ts list-product-brand
+
+gen-new-products:
+	cd atdd/data-generator && npx ts-node src/index.ts new-products $(n)
+
+move-products-to-test:
+	cp atdd/data-generator/output/new-products.json atdd/ui-playwright/test-data/new-products.json
+
+playwright-web:
+	cd atdd/ui-playwright && npm run test:web -- ui
+
+playwright-web-ui:
+	cd atdd/ui-playwright && npm run test:web:ui
+
+playwright-webdata:
+	cd atdd/ui-playwright && npm run test:webdata
 
 # --- EKS Build & Deploy ---
 # Image tag format: eks-YYMMDD-HHMM (e.g., eks-260319-1045)
