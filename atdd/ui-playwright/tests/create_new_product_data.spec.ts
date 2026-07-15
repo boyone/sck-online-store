@@ -38,9 +38,8 @@ for (const product of newProducts) {
 
     await test.step('verify new product', async () => {
       await page.getByRole('link', { name: 'Home' }).click();
-      page.fill('#search-product-input', product["product-name"])
+      await page.fill('#search-product-input', product["product-name"])
       await page.locator('#search-product-btn').click()
-      // await page.getByRole('button', { name: 'Search' }).click();
       await expect(page.getByRole('link', { name: product["product-name"] })).toContainText(product["product-name"])
     })
 
