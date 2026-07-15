@@ -67,3 +67,17 @@ store-service/main
 
 # python cache
 __pycache__/
+
+# Playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+playwright/.auth/
+
+# junit report
+junit.xml
+
+# Chrome for Testing binaries (too large for GitHub)
+atdd/ui/chrome/
+atdd/ui/temp_downloads/

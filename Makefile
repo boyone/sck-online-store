@@ -132,7 +132,7 @@ run_robot_order_summary_pdf:
 	&& python3 -m venv .venv \
 	&& . .venv/bin/activate \
 	&& pip install -r requirements.txt \
-	&& robot -v URL:$(URL) -v REMOTE_HUB_URL:${REMOTE_HUB_URL} -x ./reports/pdf.xml ./002-Order-Summary-PDF/TSS-OSP-001-Order_one_product_one_unit_success.robot \
+	&& robot -v URL:$(URL) -v REMOTE_HUB_URL:${REMOTE_HUB_URL} -x ./reports/pdf.xml ./002-Order-Summary-PDF \
 	&& deactivate
 
 # run_newman: 
@@ -218,6 +218,13 @@ gen-new-products:
 
 move-products-to-test:
 	cp atdd/data-generator/output/new-products.json atdd/ui-playwright/test-data/new-products.json
+	cp atdd/data-generator/output/new-products.json atdd/api-playwright/test-data/new-products.json
+
+playwright:
+	cd atdd/ui-playwright && npm install && npm test
+
+playwright-convert:
+	cd atdd/ui-playwright && npm install && npm run test:convert
 
 playwright-web:
 	cd atdd/ui-playwright && npm run test:web -- ui
@@ -227,6 +234,9 @@ playwright-web-ui:
 
 playwright-webdata:
 	cd atdd/ui-playwright && npm run test:webdata
+
+playwright-apidata:
+	cd atdd/api-playwright && npm test 
 
 # --- EKS Build & Deploy ---
 # Image tag format: eks-YYMMDD-HHMM (e.g., eks-260319-1045)
