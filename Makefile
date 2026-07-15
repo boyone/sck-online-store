@@ -227,16 +227,16 @@ playwright-convert:
 	cd atdd/ui-playwright && npm install && npm run test:convert
 
 playwright-web:
-	cd atdd/ui-playwright && npm run test:web -- ui
+	cd atdd/ui-playwright && npm install  && npm run test:web -- ui
 
 playwright-web-ui:
-	cd atdd/ui-playwright && npm run test:web:ui
+	cd atdd/ui-playwright && npm install  && npm run test:web:ui
 
 playwright-webdata:
-	cd atdd/ui-playwright && npm run test:webdata
+	cd atdd/ui-playwright && npm install  && npm run test:webdata
 
 playwright-apidata:
-	cd atdd/api-playwright && npm test 
+	cd atdd/api-playwright && npm install  && npm test 
 
 # --- EKS Build & Deploy ---
 # Image tag format: eks-YYMMDD-HHMM (e.g., eks-260319-1045)
