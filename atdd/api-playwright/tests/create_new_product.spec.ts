@@ -14,9 +14,9 @@ for (const sample of newProducts as NewProduct[]) {
   test(`TSS create new product ${sample['product-name']}`, async ({ request }) => {
     const token = await login(request)
     const product: NewProduct = { ...sample, 'product-name': uniqueName(sample['product-name']) }
-    let createdId = 0
+    // let createdId = 0
 
-    await test.step('create the product', async () => {
+    const createdId = await test.step('create the product', async () => {
       const response = await request.post('product', {
         headers: authHeader(token),
         data: product,
@@ -24,7 +24,7 @@ for (const sample of newProducts as NewProduct[]) {
       expect(response.status(), 'create should return 201 Created').toBe(201)
       const body = await response.json()
       expect(body.id, 'response should carry the new product id').toBeGreaterThan(0)
-      createdId = body.id
+      return body.id
     })
 
     await test.step('find the product via search', async () => {
