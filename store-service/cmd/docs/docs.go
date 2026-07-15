@@ -123,6 +123,70 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/login": {
+            "post": {
+                "description": "Authenticate user and return access and refresh tokens",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "User login",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/order": {
             "post": {
                 "security": [
@@ -361,6 +425,53 @@ const docTemplate = `{
                         "description": "Internal Server Error"
                     }
                 }
+            },
+            "post": {
+                "description": "Create a new product",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "product"
+                ],
+                "summary": "Create new product",
+                "parameters": [
+                    {
+                        "description": "New product data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/product.NewProduct"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
             }
         },
         "/api/v1/product/{id}": {
@@ -406,11 +517,22 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "api.OrderConfirmation": {
-            "description": "Order confirmation response containing order ID",
+        "api.LoginRequest": {
             "type": "object",
             "properties": {
-                "order_id": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.OrderConfirmation": {
+            "description": "Order confirmation response containing order number",
+            "type": "object",
+            "properties": {
+                "order_number": {
                     "type": "integer"
                 }
             }
@@ -562,7 +684,7 @@ const docTemplate = `{
         "payment.SubmitedPayment": {
             "type": "object",
             "properties": {
-                "order_id": {
+                "order_number": {
                     "type": "integer"
                 },
                 "otp": {
@@ -576,7 +698,7 @@ const docTemplate = `{
         "payment.SubmitedPaymentResponse": {
             "type": "object",
             "properties": {
-                "order_id": {
+                "order_number": {
                     "type": "integer"
                 },
                 "payment_date": {
@@ -609,6 +731,32 @@ const docTemplate = `{
             "properties": {
                 "amount": {
                     "type": "integer"
+                }
+            }
+        },
+        "product.NewProduct": {
+            "type": "object",
+            "required": [
+                "product-brand",
+                "product-name",
+                "product-price",
+                "product-stock"
+            ],
+            "properties": {
+                "product-brand": {
+                    "type": "string"
+                },
+                "product-name": {
+                    "type": "string"
+                },
+                "product-price": {
+                    "type": "number"
+                },
+                "product-stock": {
+                    "type": "integer"
+                },
+                "product_image": {
+                    "type": "string"
                 }
             }
         },

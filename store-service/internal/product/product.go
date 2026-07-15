@@ -10,10 +10,20 @@ import (
 type ProductInterface interface {
 	GetProducts(ctx context.Context, keyword string, limit string, offset string) (ProductResult, error)
 	GetProductByID(ctx context.Context, ID int) (ProductDetail, error)
+	CreateNewProduct(ctx context.Context, newProduct NewProduct) (int, error)
 }
 
 type ProductService struct {
 	ProductRepository ProductRepository
+}
+
+func (productService ProductService) CreateNewProduct(ctx context.Context, newProduct NewProduct) (int, error) {
+	id, err := productService.ProductRepository.CreateNewProduct(ctx, newProduct)
+	if err != nil {
+		slog.ErrorContext(ctx, "ProductRepository.CreateNewProduct internal error", "error", err)
+		return 0, err
+	}
+	return id, nil
 }
 
 func (productService ProductService) GetProducts(ctx context.Context, keyword string, limit string, offset string) (ProductResult, error) {

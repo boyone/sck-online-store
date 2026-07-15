@@ -240,6 +240,7 @@ func main() {
 
 	protected.GET("/product", productAPI.SearchHandler)
 	protected.GET("/product/:id", productAPI.GetProductHandler)
+	protected.POST("/product", productAPI.CreateProductHandler)
 
 	protected.GET("/cart", cartAPI.GetCartHandler)
 	protected.PUT("/addCart", cartAPI.AddCartHandler)

@@ -48,6 +48,41 @@ func (api ProductAPI) SearchHandler(context *gin.Context) {
 	context.JSON(http.StatusOK, productResult)
 }
 
+// @Summary Create new product
+// @Description Create a new product
+// @Tags product
+// @Accept json
+// @Produce json
+// @Param body body product.NewProduct true "New product data"
+// @Success 201
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/v1/product [post]
+func (api ProductAPI) CreateProductHandler(context *gin.Context) {
+	newProduct := product.NewProduct{Image: "/default.png"}
+	if err := context.ShouldBindJSON(&newProduct); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	ctx := context.Request.Context()
+	id, err := api.ProductService.CreateNewProduct(ctx, newProduct)
+	if err != nil {
+		slog.ErrorContext(ctx, "ProductService.CreateNewProduct failed",
+			"log_type", "error",
+			"error_code", "PRODUCT_CREATE_FAILED",
+			"error_message", err.Error(),
+		)
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+	context.JSON(http.StatusCreated, gin.H{"id": id})
+}
+
 // @Summary Get product by ID
 // @Description Get detailed information about a specific product
 // @Tags product

@@ -4,6 +4,7 @@
 package product_test
 
 import (
+	"context"
 	"store-service/internal/product"
 	"testing"
 
@@ -32,7 +33,7 @@ func Test_ProductRepository(t *testing.T) {
 		}
 		ID := 2
 
-		actualProduct, err := repository.GetProductByID(ID)
+		actualProduct, err := repository.GetProductByID(context.Background(), ID)
 		assert.Equal(t, expected, actualProduct)
 		assert.Equal(t, err, nil)
 	})
@@ -40,8 +41,29 @@ func Test_ProductRepository(t *testing.T) {
 	t.Run("UpdateStock_Input_Product_ID_2_No_Error", func(t *testing.T) {
 		productID := 2
 		stock := 1
-		err := repository.UpdateStock(productID, stock)
+		err := repository.UpdateStock(context.Background(), productID, stock)
 
 		assert.Equal(t, nil, err)
+	})
+
+	t.Run("CreateNewProduct_Input_NewProduct_Should_Be_New_ID_No_Error", func(t *testing.T) {
+		newProduct := product.NewProduct{
+			Name:  "Happiness Training Bicycle",
+			Brand: "SportsFun",
+			Price: 119.95,
+			Stock: 100,
+		}
+
+		actualID, err := repository.CreateNewProduct(context.Background(), newProduct)
+
+		assert.NoError(t, err)
+		assert.NotZero(t, actualID)
+
+		productDetail, err := repository.GetProductByID(context.Background(), actualID)
+		assert.Equal(t, newProduct.Name, productDetail.Name)
+		assert.Equal(t, newProduct.Brand, productDetail.Brand)
+		assert.Equal(t, newProduct.Price, productDetail.Price)
+		assert.Equal(t, newProduct.Stock, productDetail.Stock)
+		assert.Equal(t, newProduct.Image, productDetail.Image)
 	})
 }

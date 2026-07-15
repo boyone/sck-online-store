@@ -111,6 +111,17 @@ func (api AuthAPI) RefreshTokenHandler(context *gin.Context) {
 	})
 }
 
+// @Summary User login
+// @Description Authenticate user and return access and refresh tokens
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param body body LoginRequest true "Login credentials"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 401 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /api/v1/login [post]
 func (api AuthAPI) LoginHandler(context *gin.Context) {
 	ctx := context.Request.Context()
 	ip := context.ClientIP()

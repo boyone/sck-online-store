@@ -114,6 +114,11 @@ func (repository *mockProductRepository) UpdateStock(ctx context.Context, produc
 	return argument.Error(0)
 }
 
+func (repository *mockProductRepository) CreateNewProduct(ctx context.Context, newProduct product.NewProduct) (int, error) {
+	argument := repository.Called(ctx, newProduct)
+	return argument.Get(0).(int), argument.Error(1)
+}
+
 type mockCartRepository struct {
 	mock.Mock
 }

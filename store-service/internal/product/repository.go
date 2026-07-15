@@ -10,6 +10,7 @@ type ProductRepository interface {
 	GetProducts(ctx context.Context, keyword string, limit string, offset string) (ProductResult, error)
 	GetProductByID(ctx context.Context, ID int) (ProductDetail, error)
 	UpdateStock(ctx context.Context, productID int, quantity int) error
+	CreateNewProduct(ctx context.Context, newProduct NewProduct) (int, error)
 }
 
 type ProductRepositoryMySQL struct {
@@ -50,4 +51,16 @@ func (productRepository ProductRepositoryMySQL) GetProductByID(ctx context.Conte
 func (productRepository ProductRepositoryMySQL) UpdateStock(ctx context.Context, productID int, stock int) error {
 	_, err := productRepository.DBConnection.ExecContext(ctx, `UPDATE products SET stock = stock-? WHERE id=?`, stock, productID)
 	return err
+}
+
+func (productRepository ProductRepositoryMySQL) CreateNewProduct(ctx context.Context, newProduct NewProduct) (int, error) {
+	result, err := productRepository.DBConnection.ExecContext(ctx,
+		`INSERT INTO products (product_name, product_brand, product_price, stock, image_url) VALUES (?, ?, ?, ?, ?)`,
+		newProduct.Name, newProduct.Brand, newProduct.Price, newProduct.Stock, newProduct.Image,
+	)
+	if err != nil {
+		return 0, err
+	}
+	id, err := result.LastInsertId()
+	return int(id), err
 }

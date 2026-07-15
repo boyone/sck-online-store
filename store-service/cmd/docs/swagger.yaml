@@ -1,8 +1,15 @@
 definitions:
-  api.OrderConfirmation:
-    description: Order confirmation response containing order ID
+  api.LoginRequest:
     properties:
-      order_id:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  api.OrderConfirmation:
+    description: Order confirmation response containing order number
+    properties:
+      order_number:
         type: integer
     type: object
   cart.CartDetail:
@@ -101,7 +108,7 @@ definitions:
     type: object
   payment.SubmitedPayment:
     properties:
-      order_id:
+      order_number:
         type: integer
       otp:
         type: integer
@@ -110,7 +117,7 @@ definitions:
     type: object
   payment.SubmitedPaymentResponse:
     properties:
-      order_id:
+      order_number:
         type: integer
       payment_date:
         type: string
@@ -132,6 +139,24 @@ definitions:
     properties:
       amount:
         type: integer
+    type: object
+  product.NewProduct:
+    properties:
+      product-brand:
+        type: string
+      product-name:
+        type: string
+      product-price:
+        type: number
+      product-stock:
+        type: integer
+      product_image:
+        type: string
+    required:
+    - product-brand
+    - product-name
+    - product-price
+    - product-stock
     type: object
   product.Product:
     properties:
@@ -222,6 +247,48 @@ paths:
       summary: Update cart
       tags:
       - cart
+  /api/v1/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return access and refresh tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/api.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: User login
+      tags:
+      - auth
   /api/v1/order:
     post:
       consumes:
@@ -376,6 +443,37 @@ paths:
         "500":
           description: Internal Server Error
       summary: Search products
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: Create a new product
+      parameters:
+      - description: New product data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/product.NewProduct'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create new product
       tags:
       - product
   /api/v1/product/{id}:

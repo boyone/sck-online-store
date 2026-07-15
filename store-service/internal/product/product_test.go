@@ -105,6 +105,46 @@ func Test_GetProductByID_Should_be_Return_ProductDetail_ID_1_include_PriceTHB(t 
 	assert.Equal(t, nil, err)
 }
 
+func Test_CreateNewProduct_Should_be_Return_ID_and_nil_Error(t *testing.T) {
+	newProduct := product.NewProduct{
+		Name:  "BalancTraining Bicycle",
+		Brand: "SportsFun",
+		Price: 119.95,
+		Stock: 100,
+	}
+
+	mockProductRepository := new(mockProductRepository)
+	mockProductRepository.On("CreateNewProduct", mock.Anything, newProduct).Return(1, nil)
+
+	productService := product.ProductService{
+		ProductRepository: mockProductRepository,
+	}
+	id, err := productService.CreateNewProduct(context.Background(), newProduct)
+
+	assert.Equal(t, 1, id)
+	assert.Nil(t, err)
+}
+
+func Test_CreateNewProduct_Should_be_Return_Error(t *testing.T) {
+	newProduct := product.NewProduct{
+		Name:  "BalancTraining Bicycle",
+		Brand: "SportsFun",
+		Price: 119.95,
+		Stock: 100,
+	}
+
+	mockProductRepository := new(mockProductRepository)
+	mockProductRepository.On("CreateNewProduct", mock.Anything, newProduct).Return(0, errors.New("CreateNewProduct Error"))
+
+	productService := product.ProductService{
+		ProductRepository: mockProductRepository,
+	}
+	id, err := productService.CreateNewProduct(context.Background(), newProduct)
+
+	assert.Equal(t, 0, id)
+	assert.NotNil(t, err)
+}
+
 func Test_GetProductByID_Should_be_Return_GetProductByID_Error(t *testing.T) {
 	expected := product.ProductDetail{}
 	pid := 1

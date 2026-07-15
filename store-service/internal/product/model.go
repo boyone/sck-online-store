@@ -1,5 +1,13 @@
 package product
 
+type NewProduct struct {
+	Name  string  `json:"product-name" binding:"required"`
+	Brand string  `json:"product-brand" binding:"required"`
+	Price float64 `json:"product-price" binding:"required"`
+	Stock int     `json:"product-stock" binding:"required"`
+	Image string  `json:"product_image"`
+}
+
 type ProductResult struct {
 	Total    int       `json:"total"`
 	Products []Product `json:"products"`
