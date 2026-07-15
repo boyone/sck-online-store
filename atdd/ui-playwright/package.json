@@ -1,0 +1,24 @@
+{
+  "name": "api-playwright",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:web": "playwright test tests/create_new_product.spec.ts --headed",
+    "test:webdata": "playwright test tests/create_new_product_data.spec.ts --workers 5",
+    "test:web:ui": "playwright test --ui",
+    "test": "playwright test",
+    "test:convert": "playwright test tests/sck-online-store-robot-convert.spec.ts"
+  },
+  "keywords": [],
+  "author": "boyone",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.59.0",
+    "@types/node": "^25.5.0"
+  },
+  "dependencies": {
+    "pdf-parse": "^2.4.5"
+  }
+}
