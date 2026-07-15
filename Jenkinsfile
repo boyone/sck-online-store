@@ -70,7 +70,7 @@ pipeline {
       steps {
         sh 'make start_test_suite'
         // sh 'make run_newman'
-        sh 'make run_robot'
+        sh 'make run_robot_order_summary_pdf'
         junit 'atdd/ui/reports/*.xml'
         sh 'make stop_test_suite'
       }
