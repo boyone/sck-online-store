@@ -1,0 +1,20 @@
+{
+  "name": "api-playwright",
+  "version": "1.0.0",
+  "description": "API e2e tests for store-service (add new product)",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:create-product": "playwright test tests/create_new_product.spec.ts --workers 5",
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report"
+  },
+  "keywords": [],
+  "author": "boyone",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.59.0",
+    "@types/node": "^25.5.0"
+  }
+}
